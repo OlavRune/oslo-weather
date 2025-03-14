@@ -12,6 +12,12 @@ const descriptionElement = document.getElementById('description');
 const humidityElement = document.getElementById('humidity');
 const windElement = document.getElementById('wind');
 
+// Format hour from ISO string
+function formatHour(isoString) {
+    const date = new Date(isoString);
+    return date.getHours().toString().padStart(2, '0') + ':00';
+}
+
 // Convert weather code to description
 function getWeatherDescription(code) {
     const weatherCodes = {
@@ -43,12 +49,6 @@ function getWeatherDescription(code) {
     return weatherCodes[code] || 'unknown';
 }
 
-// Format hour from ISO string
-function formatHour(isoString) {
-    const date = new Date(isoString);
-    return date.getHours().toString().padStart(2, '0') + ':00';
-}
-
 // Create hourly temperature display
 function createHourlyDisplay(container, times, temperatures) {
     const hourlyHtml = times.map((time, index) => `
@@ -68,8 +68,22 @@ function createHourlyDisplay(container, times, temperatures) {
     `;
 }
 
+// Get location name using reverse geocoding
+async function getLocationName(lat, lon) {
+    try {
+        const response = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`
+        );
+        const data = await response.json();
+        return data.city || data.locality || 'Unknown Location';
+    } catch (error) {
+        console.error('Error getting location name:', error);
+        return 'Unknown Location';
+    }
+}
+
 // Fetch weather data
-async function getWeatherForecast() {
+async function getWeatherForecast(lat, lon, locationName = null) {
     try {
         // Construct tomorrow's date
         const tomorrow = new Date();
@@ -78,7 +92,7 @@ async function getWeatherForecast() {
 
         // Fetch forecast with hourly data
         const response = await fetch(
-            `${BASE_URL}?latitude=${OSLO_LAT}&longitude=${OSLO_LON}&hourly=temperature_2m&daily=temperature_2m_max,temperature_2m_min,weathercode,windspeed_10m_max,relative_humidity_2m_max&timezone=auto&start_date=${tomorrowStr}&end_date=${tomorrowStr}`
+            `${BASE_URL}?latitude=${lat}&longitude=${lon}&hourly=temperature_2m&daily=temperature_2m_max,temperature_2m_min,weathercode,windspeed_10m_max,relative_humidity_2m_max&timezone=auto&start_date=${tomorrowStr}&end_date=${tomorrowStr}`
         );
         
         if (!response.ok) {
@@ -103,7 +117,10 @@ async function getWeatherForecast() {
         }
 
         // Set location name
-        locationElement.textContent = 'Oslo, Norway';
+        if (!locationName) {
+            locationName = await getLocationName(lat, lon);
+        }
+        locationElement.textContent = locationName;
 
         // Create hourly display
         const weatherCard = document.querySelector('.weather-card');
@@ -119,5 +136,52 @@ async function getWeatherForecast() {
     }
 }
 
+// Get user's location
+function getUserLocation() {
+    if (navigator.geolocation) {
+        locationElement.textContent = 'Detecting location...';
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                getWeatherForecast(position.coords.latitude, position.coords.longitude);
+                // Update button state
+                document.getElementById('locationToggle').textContent = 'Show Oslo Weather';
+            },
+            error => {
+                console.error('Error getting location:', error);
+                // Fallback to Oslo
+                getWeatherForecast(OSLO_LAT, OSLO_LON, 'Oslo, Norway');
+                document.getElementById('locationToggle').textContent = 'Use My Location';
+            }
+        );
+    } else {
+        locationElement.textContent = 'Geolocation is not supported';
+        // Fallback to Oslo
+        getWeatherForecast(OSLO_LAT, OSLO_LON, 'Oslo, Norway');
+    }
+}
+
+// Toggle between Oslo and user location
+function toggleLocation() {
+    const button = document.getElementById('locationToggle');
+    if (button.textContent === 'Use My Location') {
+        getUserLocation();
+    } else {
+        getWeatherForecast(OSLO_LAT, OSLO_LON, 'Oslo, Norway');
+        button.textContent = 'Use My Location';
+    }
+}
+
+// Create location toggle button
+function createLocationToggle() {
+    const container = document.querySelector('.container');
+    const button = document.createElement('button');
+    button.id = 'locationToggle';
+    button.className = 'location-toggle';
+    button.textContent = 'Use My Location';
+    button.onclick = toggleLocation;
+    container.insertBefore(button, container.firstChild);
+}
+
 // Initialize the app
-getWeatherForecast(); 
+createLocationToggle();
+getWeatherForecast(OSLO_LAT, OSLO_LON, 'Oslo, Norway'); 

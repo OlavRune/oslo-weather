@@ -21,7 +21,7 @@ A simple web application that shows tomorrow's weather forecast for Oslo, Norway
 
 ## Live Demo
 
-Visit [https://YOUR_USERNAME.github.io/oslo-weather/](https://YOUR_USERNAME.github.io/oslo-weather/) to see the live application.
+Visit [https://OlavRune.github.io/oslo-weather/](https://OlavRune.github.io/oslo-weather/) to see the live application.
 
 ## Local Development
 
