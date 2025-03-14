@@ -174,4 +174,136 @@ body {
     .restart-text {
         font-size: 14px;
     }
+}
+
+.camera-button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', cursive;
+    background: #002868;
+    color: white;
+    border: 2px solid #ef2b2d;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.camera-button:hover {
+    background: #ef2b2d;
+    transform: scale(1.05);
+}
+
+.camera-ui {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.camera-ui.hidden {
+    display: none;
+}
+
+.video-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.face-guide {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 260px;
+    border: 3px dashed rgba(255, 255, 255, 0.7);
+    border-radius: 100px 100px 60px 60px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.face-guide::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 240px;
+    border: 2px solid rgba(239, 43, 45, 0.7);
+    border-radius: 90px 90px 50px 50px;
+}
+
+.face-guide-text {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 12px;
+    white-space: nowrap;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+#video, #canvas {
+    max-width: 100%;
+    max-height: 60vh;
+}
+
+#canvas.hidden {
+    display: none;
+}
+
+.camera-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.camera-controls button {
+    padding: 10px 20px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.camera-snap {
+    background: #4CAF50;
+    color: white;
+}
+
+.camera-retake {
+    background: #FFC107;
+    color: black;
+}
+
+.camera-use {
+    background: #2196F3;
+    color: white;
+}
+
+.camera-cancel {
+    background: #f44336;
+    color: white;
+}
+
+.camera-controls button:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.camera-controls button.hidden {
+    display: none;
 } 

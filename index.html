@@ -23,7 +23,26 @@
                 </div>
             </div>
         </div>
+        <button id="cameraButton" class="camera-button">📸 Use Your Photo</button>
     </div>
+
+    <!-- Camera UI -->
+    <div id="cameraUI" class="camera-ui hidden">
+        <div class="video-container">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas" class="hidden"></canvas>
+            <div class="face-guide">
+                <div class="face-guide-text">Align your face within the outline</div>
+            </div>
+        </div>
+        <div class="camera-controls">
+            <button id="snapButton" class="camera-snap">Take Photo</button>
+            <button id="retakeButton" class="camera-retake hidden">Retake</button>
+            <button id="usePhotoButton" class="camera-use hidden">Use Photo</button>
+            <button id="cancelButton" class="camera-cancel">Cancel</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html> 
