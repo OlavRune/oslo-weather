@@ -39,6 +39,14 @@ class FlappyBird {
         // Initialize camera functionality
         this.initializeCamera();
         
+        // Handle resize and orientation changes
+        this.handleResize = this.handleResize.bind(this);
+        window.addEventListener('resize', this.handleResize);
+        window.addEventListener('orientationchange', this.handleResize);
+        
+        // Initial size setup
+        this.handleResize();
+        
         this.init();
     }
 
@@ -46,7 +54,7 @@ class FlappyBird {
         this.bird.style.top = `${this.birdY}px`;
         this.highScoreElement.textContent = `High Score: ${this.highScore}`;
         
-        // Handle both touch and keyboard controls
+        // Improved touch and keyboard controls
         const handleStart = (e) => {
             e.preventDefault();
             if (!this.isGameRunning) {
@@ -63,8 +71,30 @@ class FlappyBird {
             }
         });
 
-        // Touch events for mobile
-        document.addEventListener('touchstart', handleStart, { passive: false });
+        // Improved touch event handling for Samsung devices
+        const touchHandler = (e) => {
+            e.preventDefault();
+            // Ignore touches on UI elements
+            if (e.target.closest('.camera-button') || e.target.closest('.camera-ui')) {
+                return;
+            }
+            handleStart(e);
+        };
+
+        // Add touch events with passive: false for better performance
+        document.addEventListener('touchstart', touchHandler, { passive: false });
+        
+        // Prevent scrolling and bouncing on Samsung browsers
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+
+        // Handle visibility change (when app goes to background)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && this.isGameRunning) {
+                this.pauseGame();
+            }
+        });
 
         // Check for saved photo
         const savedPhoto = localStorage.getItem('birdPhoto');
@@ -76,6 +106,28 @@ class FlappyBird {
     }
 
     startGame() {
+        // Fix for Samsung browser fullscreen
+        if (window.innerWidth <= 480 || window.innerHeight <= 480) {
+            const gameContainer = document.querySelector('.game-container');
+            
+            // Try different fullscreen methods
+            const requestFullscreen = () => {
+                if (gameContainer.requestFullscreen) {
+                    gameContainer.requestFullscreen().catch(() => {});
+                } else if (gameContainer.webkitRequestFullscreen) {
+                    gameContainer.webkitRequestFullscreen().catch(() => {});
+                } else if (gameContainer.mozRequestFullScreen) {
+                    gameContainer.mozRequestFullScreen().catch(() => {});
+                }
+            };
+
+            // Request fullscreen on user interaction
+            requestFullscreen();
+        }
+
+        // Force a resize event to ensure correct dimensions
+        window.dispatchEvent(new Event('resize'));
+
         this.isGameRunning = true;
         this.score = 0;
         this.birdY = this.gameHeight / 2;
@@ -91,6 +143,14 @@ class FlappyBird {
         // Start game loops
         this.gameLoop = requestAnimationFrame(() => this.update());
         this.createPipeInterval = setInterval(() => this.createPipe(), this.pipeInterval);
+    }
+
+    pauseGame() {
+        if (this.isGameRunning) {
+            this.isGameRunning = false;
+            clearInterval(this.createPipeInterval);
+            cancelAnimationFrame(this.gameLoop);
+        }
     }
 
     jump() {
@@ -135,7 +195,7 @@ class FlappyBird {
         // Update pipes
         for (let i = this.pipes.length - 1; i >= 0; i--) {
             const pipe = this.pipes[i];
-            pipe.x -= 3;
+            pipe.x -= this.gameSpeed;
             pipe.top.style.left = `${pipe.x}px`;
             pipe.bottom.style.left = `${pipe.x}px`;
 
@@ -400,6 +460,42 @@ class FlappyBird {
         }
         this.cameraUI.classList.add('hidden');
         this.video.srcObject = null;
+    }
+
+    handleResize() {
+        // Update game dimensions
+        this.gameWidth = this.game.offsetWidth;
+        this.gameHeight = this.game.offsetHeight;
+        
+        // Calculate scale factor to maintain game proportions
+        const scale = Math.min(
+            window.innerWidth / this.gameWidth,
+            window.innerHeight / this.gameHeight
+        );
+        
+        // Adjust pipe gap based on screen height
+        this.pipeGap = Math.min(150, this.gameHeight * 0.25);
+        
+        // Adjust bird position
+        if (!this.isGameRunning) {
+            this.birdY = this.gameHeight / 2;
+            this.bird.style.top = `${this.birdY}px`;
+        }
+        
+        // Update pipe positions and heights
+        this.pipes.forEach(pipe => {
+            const topHeight = parseInt(pipe.top.style.height);
+            pipe.bottom.style.height = `${this.gameHeight - topHeight - this.pipeGap}px`;
+        });
+
+        // Adjust game speed based on screen width
+        const baseSpeed = 3;
+        const speedScale = this.gameWidth / 500; // Base width reference
+        this.gameSpeed = baseSpeed * Math.min(speedScale, 1.5);
+
+        // Update mountain animation speed
+        document.querySelector('.mountain-range').style.animation = 
+            `moveMountains ${60 / this.gameSpeed}s linear infinite`;
     }
 }
 

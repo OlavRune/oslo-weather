@@ -7,48 +7,56 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
 }
 
 body {
     background: linear-gradient(135deg, #ef2b2d, #002868);
-    min-height: 100vh;
-    min-height: -webkit-fill-available; /* For iOS Safari */
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    touch-action: none; /* Prevent unwanted scrolling/zooming */
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-}
-
-html {
-    height: -webkit-fill-available; /* For iOS Safari */
-    overflow: hidden;
+    padding: 0;
+    touch-action: none;
+    left: 0;
+    top: 0;
 }
 
 .container {
+    position: fixed;
     width: 100%;
-    max-width: 500px;
-    aspect-ratio: 16/9;
+    height: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 
 .game-container {
+    position: fixed;
     width: 100%;
     height: 100%;
-    position: relative;
+    height: 100dvh;
     overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 #game {
+    position: absolute;
     width: 100%;
     height: 100%;
     background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
-    position: relative;
     overflow: hidden;
 }
 
@@ -168,24 +176,32 @@ html {
     }
 }
 
-@media (max-width: 480px) {
-    body {
-        padding: 10px;
+@media (max-width: 480px), (max-height: 480px) {
+    .container, .game-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        width: 100dvw;
+        height: 100vh;
+        height: 100dvh;
+        max-width: 100vw;
+        max-height: 100vh;
+        max-height: 100dvh;
     }
-    
-    .container {
-        padding: 0;
+
+    #game {
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        max-width: none;
-    }
-    
-    .game-container {
-        border-radius: 0;
     }
     
     #score {
         font-size: 20px;
+        top: max(env(safe-area-inset-top, 20px), 20px);
+        right: max(env(safe-area-inset-right, 20px), 20px);
     }
     
     #start-message, #game-over {
@@ -193,28 +209,32 @@ html {
         padding: 15px;
         width: 80%;
         max-width: 300px;
+        background: rgba(0, 40, 104, 0.9);
+    }
+
+    .camera-button {
+        position: fixed;
+        bottom: max(env(safe-area-inset-bottom, 20px), 20px);
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+        z-index: 10;
     }
     
-    #final-score, #high-score {
-        font-size: 14px;
+    .camera-ui {
+        padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 
+                env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
     }
-    
-    .restart-text {
-        font-size: 12px;
+
+    .video-container {
+        margin: 0;
+        height: 100%;
+        padding: env(safe-area-inset-top, 20px) 0;
     }
-    
-    .camera-controls {
-        padding: 10px;
-    }
-    
-    .camera-controls button {
-        font-size: 10px;
-        padding: 8px 16px;
-    }
-    
-    .face-guide-text {
-        font-size: 10px;
-        top: -30px;
+
+    #video, #canvas {
+        max-height: calc(100vh - 140px);
+        max-height: calc(100dvh - 140px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
     }
 }
 
