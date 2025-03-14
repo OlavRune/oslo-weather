@@ -8,20 +8,26 @@ class FlappyBird {
         this.finalScoreElement = document.getElementById('final-score');
         this.highScoreElement = document.getElementById('high-score');
 
+        // Detect Samsung browser
+        this.isSamsungBrowser = navigator.userAgent.match(/SamsungBrowser/i) !== null;
+
         this.gameWidth = this.game.offsetWidth;
         this.gameHeight = this.game.offsetHeight;
         this.birdY = this.gameHeight / 2;
         this.birdVelocity = 0;
-        this.gravity = 0.5;
-        this.jumpForce = -10;
+        this.gravity = this.isSamsungBrowser ? 0.35 : 0.5;
+        this.jumpForce = this.isSamsungBrowser ? -8 : -10;
         this.pipeGap = 150;
         this.pipeWidth = 60;
-        this.pipeInterval = 1500;
+        this.pipeInterval = this.isSamsungBrowser ? 2000 : 1500;
+        this.baseSpeed = this.isSamsungBrowser ? 2 : 3;
         this.pipes = [];
         this.score = 0;
         this.highScore = parseInt(localStorage.getItem('flappyHighScore')) || 0;
         this.isGameRunning = false;
         this.gameLoop = null;
+        this.lastFrameTime = 0;
+        this.deltaTime = 0;
 
         // Camera UI elements
         this.cameraButton = document.getElementById('cameraButton');
@@ -186,16 +192,22 @@ class FlappyBird {
     update() {
         if (!this.isGameRunning) return;
 
-        // Update bird position
-        this.birdVelocity += this.gravity;
-        this.birdY += this.birdVelocity;
+        // Calculate delta time for smooth animations
+        const currentTime = performance.now();
+        if (!this.lastFrameTime) this.lastFrameTime = currentTime;
+        this.deltaTime = (currentTime - this.lastFrameTime) / 16.67; // Normalize to 60fps
+        this.lastFrameTime = currentTime;
+
+        // Update bird position with delta time
+        this.birdVelocity += this.gravity * this.deltaTime;
+        this.birdY += this.birdVelocity * this.deltaTime;
         this.bird.style.top = `${this.birdY}px`;
         this.bird.style.transform = `translateY(-50%) rotate(${this.birdVelocity * 2}deg)`;
 
-        // Update pipes
+        // Update pipes with delta time
         for (let i = this.pipes.length - 1; i >= 0; i--) {
             const pipe = this.pipes[i];
-            pipe.x -= this.gameSpeed;
+            pipe.x -= this.gameSpeed * this.deltaTime;
             pipe.top.style.left = `${pipe.x}px`;
             pipe.bottom.style.left = `${pipe.x}px`;
 
@@ -488,14 +500,19 @@ class FlappyBird {
             pipe.bottom.style.height = `${this.gameHeight - topHeight - this.pipeGap}px`;
         });
 
-        // Adjust game speed based on screen width
-        const baseSpeed = 3;
+        // Adjust game speed based on screen width and device
         const speedScale = this.gameWidth / 500; // Base width reference
-        this.gameSpeed = baseSpeed * Math.min(speedScale, 1.5);
+        this.gameSpeed = this.baseSpeed * Math.min(speedScale, 1.2);
+        
+        // Further reduce speed for Samsung devices
+        if (this.isSamsungBrowser) {
+            this.gameSpeed *= 0.75;
+        }
 
         // Update mountain animation speed
+        const mountainDuration = this.isSamsungBrowser ? 80 : 60;
         document.querySelector('.mountain-range').style.animation = 
-            `moveMountains ${60 / this.gameSpeed}s linear infinite`;
+            `moveMountains ${mountainDuration / this.gameSpeed}s linear infinite`;
     }
 }
 
