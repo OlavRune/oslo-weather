@@ -2,11 +2,11 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Press Start 2P', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    background: linear-gradient(135deg, #00b4db, #0083b0);
+    background: linear-gradient(135deg, #4dc9ff, #1a8cff);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -16,181 +16,124 @@ body {
 
 .container {
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
+    aspect-ratio: 16/9;
 }
 
-/* Location toggle button */
-.location-toggle {
+.game-container {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    background: rgba(255, 255, 255, 0.95);
-    border: none;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
     border-radius: 10px;
-    color: #0083b0;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-.location-toggle:hover {
-    background: white;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+#game {
+    width: 100%;
+    height: 100%;
+    background: #70c5ce;
+    position: relative;
+    overflow: hidden;
 }
 
-.location-toggle:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+#bird {
+    width: 40px;
+    height: 30px;
+    background: #f7ec09;
+    position: absolute;
+    left: 50px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.1s;
 }
 
-h1 {
-    color: white;
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 2.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.weather-card {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.location h2 {
-    color: #333;
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.weather-info {
-    text-align: center;
-}
-
-.temperature {
-    font-size: 3.5rem;
-    color: #0083b0;
-    font-weight: bold;
-    margin: 20px 0;
-}
-
-.description {
-    font-size: 1.2rem;
-    color: #666;
-    margin-bottom: 20px;
-    text-transform: capitalize;
-}
-
-.details {
-    display: flex;
-    justify-content: space-around;
-    padding: 20px 0;
-    border-top: 1px solid #eee;
-    margin-bottom: 20px;
-}
-
-.detail {
+.pipe {
+    position: absolute;
+    width: 60px;
+    background: #2ecc71;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    justify-content: space-between;
 }
 
-.label {
-    color: #666;
-    font-size: 0.9rem;
+.pipe-top {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
-#humidity, #wind {
-    color: #0083b0;
-    font-weight: bold;
-    font-size: 1.1rem;
+.pipe-bottom {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
-/* Hourly forecast styles */
-.hourly-container {
-    border-top: 1px solid #eee;
-    padding-top: 20px;
+#score {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: white;
+    z-index: 10;
+    text-shadow: 2px 2px 0 #000;
 }
 
-.hourly-container h3 {
-    color: #333;
-    margin-bottom: 15px;
+#start-message, #game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     text-align: center;
-}
-
-.hourly-scroll {
-    display: flex;
-    overflow-x: auto;
-    gap: 15px;
-    padding: 10px 0;
-    scrollbar-width: thin;
-    scrollbar-color: #0083b0 #f0f0f0;
-}
-
-.hourly-scroll::-webkit-scrollbar {
-    height: 6px;
-}
-
-.hourly-scroll::-webkit-scrollbar-track {
-    background: #f0f0f0;
-    border-radius: 3px;
-}
-
-.hourly-scroll::-webkit-scrollbar-thumb {
-    background-color: #0083b0;
-    border-radius: 3px;
-}
-
-.hour-block {
-    min-width: 60px;
-    text-align: center;
-    padding: 10px;
-    background: rgba(0, 131, 176, 0.1);
+    color: white;
+    font-size: 24px;
+    text-shadow: 2px 2px 0 #000;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
     border-radius: 10px;
-    transition: transform 0.2s;
+    z-index: 100;
 }
 
-.hour-block:hover {
-    transform: scale(1.05);
+#game-over {
+    display: none;
 }
 
-.hour-block .time {
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 5px;
+#game-over.visible {
+    display: block;
 }
 
-.hour-block .temp {
-    color: #0083b0;
-    font-weight: bold;
-    font-size: 1.1rem;
+.hidden {
+    display: none;
+}
+
+#final-score, #high-score {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.restart-text {
+    margin-top: 20px;
+    font-size: 16px;
+    opacity: 0.8;
 }
 
 @media (max-width: 480px) {
     .container {
-        padding: 10px;
+        padding: 0;
     }
     
-    h1 {
-        font-size: 2rem;
+    #score {
+        font-size: 20px;
     }
     
-    .temperature {
-        font-size: 3rem;
+    #start-message, #game-over {
+        font-size: 20px;
+        padding: 15px;
     }
-
-    .hour-block {
-        min-width: 55px;
-        padding: 8px;
+    
+    #final-score, #high-score {
+        font-size: 16px;
     }
-
-    .location-toggle {
-        padding: 10px;
-        font-size: 0.9rem;
+    
+    .restart-text {
+        font-size: 14px;
     }
 } 
