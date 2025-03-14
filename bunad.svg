@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+    <!-- White Blouse with Puffy Sleeves -->
+    <path d="M15,15 C15,10 20,8 25,8 C30,8 35,10 35,15" fill="#ffffff"/>
+    <path d="M15,15 C15,18 20,20 25,20 C30,20 35,18 35,15" fill="#ffffff"/>
+    
+    <!-- Hair -->
+    <path d="M17,12 C17,8 21,5 25,5 C29,5 33,8 33,12" fill="#C4A484"/>
+    
+    <!-- Face -->
+    <circle cx="25" cy="12" r="5" fill="#FFE5D9"/>
+    <circle cx="23" cy="11" r="0.5" fill="#4A3000"/>
+    <circle cx="27" cy="11" r="0.5" fill="#4A3000"/>
+    <path d="M24,13 C24,13 25,14 26,13" fill="none" stroke="#4A3000" stroke-width="0.5"/>
+    
+    <!-- Black Bunad Dress -->
+    <path d="M18,15 L32,15 L35,42 L15,42 Z" fill="#000000"/>
+    
+    <!-- Silver Clasps -->
+    <path d="M22,17 L23,17 M27,17 L28,17 M22,19 L23,19 M27,19 L28,19" stroke="#C0C0C0" stroke-width="1"/>
+    
+    <!-- Embroidered Belt -->
+    <path d="M20,25 L30,25" stroke="#FFD700" stroke-width="1.5"/>
+    <path d="M21,24 L29,24 M21,26 L29,26" stroke="#ef2b2d" stroke-width="0.5"/>
+    
+    <!-- Bottom Embroidery -->
+    <path d="M15,38 Q17,37 19,38 Q21,39 23,38 Q25,37 27,38 Q29,39 31,38 Q33,37 35,38" stroke="#FFD700" stroke-width="1" fill="none"/>
+    <path d="M19,36 C19,36 21,35 23,36 C25,37 27,36 27,36" stroke="#ef2b2d" stroke-width="0.5" fill="none"/>
+    <path d="M19,40 C19,40 21,39 23,40 C25,41 27,40 27,40" stroke="#ef2b2d" stroke-width="0.5" fill="none"/>
+    
+    <!-- Red Trim -->
+    <path d="M15,42 L35,42" stroke="#ef2b2d" stroke-width="1"/>
+</svg> 

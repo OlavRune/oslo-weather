@@ -148,11 +148,23 @@ class FlappyBird {
         const topPipeRect = pipe.top.getBoundingClientRect();
         const bottomPipeRect = pipe.bottom.getBoundingClientRect();
 
+        // Make collision box much smaller, focused on the upper body
+        const collisionBox = {
+            left: birdRect.left + 20,
+            right: birdRect.right - 20,
+            top: birdRect.top + 15,
+            bottom: birdRect.top + 45  // Only check upper body area
+        };
+
         return (
-            birdRect.right > topPipeRect.left &&
-            birdRect.left < topPipeRect.right &&
-            (birdRect.top < topPipeRect.bottom ||
-             birdRect.bottom > bottomPipeRect.top)
+            // Check collision with top pipe
+            (collisionBox.right > topPipeRect.left &&
+             collisionBox.left < topPipeRect.right &&
+             collisionBox.top < topPipeRect.bottom) ||
+            // Check collision with bottom pipe
+            (collisionBox.right > bottomPipeRect.left &&
+             collisionBox.left < bottomPipeRect.right &&
+             collisionBox.bottom > bottomPipeRect.top)
         );
     }
 

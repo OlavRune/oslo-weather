@@ -6,7 +6,7 @@
 }
 
 body {
-    background: linear-gradient(135deg, #4dc9ff, #1a8cff);
+    background: linear-gradient(135deg, #ef2b2d, #002868);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -32,29 +32,35 @@ body {
 #game {
     width: 100%;
     height: 100%;
-    background: #70c5ce;
+    background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
     position: relative;
     overflow: hidden;
 }
 
 #bird {
-    width: 40px;
-    height: 30px;
-    background: #f7ec09;
+    width: 60px;
+    height: 80px;
     position: absolute;
     left: 50px;
-    border-radius: 50%;
+    background-image: url('bunad.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform-origin: center;
     transform: translateY(-50%);
     transition: transform 0.1s;
+    z-index: 3;
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
 }
 
 .pipe {
     position: absolute;
     width: 60px;
-    background: #2ecc71;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 400"><defs><pattern id="wood" patternUnits="userSpaceOnUse" width="20" height="20"><path d="M0,0 L20,0 L20,20 L0,20 Z" fill="%23723800"/><path d="M5,0 L15,0 L15,20 L5,20 Z" fill="%23603000"/></pattern></defs><rect width="60" height="400" fill="url(%23wood)"/><path d="M0,0 h60 v30 h-60 Z M0,60 h60 v30 h-60 Z M0,120 h60 v30 h-60 Z M0,180 h60 v30 h-60 Z M0,240 h60 v30 h-60 Z M0,300 h60 v30 h-60 Z M0,360 h60 v30 h-60 Z" fill="%23502000"/><path d="M10,0 L50,0 L45,30 L15,30 Z M10,60 L50,60 L45,90 L15,90 Z M10,120 L50,120 L45,150 L15,150 Z M10,180 L50,180 L45,210 L15,210 Z M10,240 L50,240 L45,270 L15,270 Z M10,300 L50,300 L45,330 L15,330 Z M10,360 L50,360 L45,390 L15,390 Z" fill="%23ef2b2d"/><path d="M20,0 L40,0 L38,15 L22,15 Z M20,60 L40,60 L38,75 L22,75 Z M20,120 L40,120 L38,135 L22,135 Z M20,180 L40,180 L38,195 L22,195 Z M20,240 L40,240 L38,255 L22,255 Z M20,300 L40,300 L38,315 L22,315 Z M20,360 L40,360 L38,375 L22,375 Z" fill="%23FFD700"/></svg>');
+    background-size: cover;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    z-index: 2;
 }
 
 .pipe-top {
@@ -86,10 +92,11 @@ body {
     color: white;
     font-size: 24px;
     text-shadow: 2px 2px 0 #000;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 40, 104, 0.8);
     padding: 20px;
     border-radius: 10px;
     z-index: 100;
+    border: 3px solid #ef2b2d;
 }
 
 #game-over {
@@ -113,6 +120,37 @@ body {
     margin-top: 20px;
     font-size: 16px;
     opacity: 0.8;
+}
+
+/* Fixed Norwegian landscape in the background */
+#game::before {
+    display: none;
+}
+
+.mountain-range {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 300%;
+    height: 60%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400"><defs><linearGradient id="snow" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="%23ffffff"/><stop offset="100%" stop-color="%23e0e0e0"/></linearGradient><linearGradient id="mountain" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="%23466d1d"/><stop offset="100%" stop-color="%23335214"/></linearGradient></defs><path d="M0,400 L0,250 L100,300 L200,150 L300,250 L400,100 L500,200 L600,50 L700,150 L800,200 L900,100 L1000,180 L1000,400 Z" fill="url(%23mountain)" opacity="0.8"/><path d="M50,280 L150,150 L250,250 L350,100 L450,180 L550,80 L650,150 L750,200 L850,120 L950,180" stroke="%23558024" stroke-width="15" fill="none" opacity="0.6"/><path d="M0,250 L100,300 L200,150 L300,250 L400,100 L500,200 L600,50 L700,150 L800,200 L900,100 L1000,180" fill="url(%23snow)" opacity="0.9"/></svg>');
+    background-repeat: repeat-x;
+    background-size: 33.33% 100%;
+    z-index: 1;
+    animation: moveMountains 60s linear infinite;
+    will-change: transform;
+    pointer-events: none;
+    opacity: 0.8;
+    filter: blur(1px);
+}
+
+@keyframes moveMountains {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-33.33%);
+    }
 }
 
 @media (max-width: 480px) {
