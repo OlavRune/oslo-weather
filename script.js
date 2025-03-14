@@ -46,23 +46,25 @@ class FlappyBird {
         this.bird.style.top = `${this.birdY}px`;
         this.highScoreElement.textContent = `High Score: ${this.highScore}`;
         
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                if (!this.isGameRunning) {
-                    this.startGame();
-                }
-                this.jump();
-            }
-        });
-
-        document.addEventListener('touchstart', (e) => {
+        // Handle both touch and keyboard controls
+        const handleStart = (e) => {
             e.preventDefault();
             if (!this.isGameRunning) {
                 this.startGame();
             }
             this.jump();
+        };
+
+        // Space key for desktop
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                handleStart(e);
+            }
         });
+
+        // Touch events for mobile
+        document.addEventListener('touchstart', handleStart, { passive: false });
 
         // Check for saved photo
         const savedPhoto = localStorage.getItem('birdPhoto');
@@ -236,14 +238,31 @@ class FlappyBird {
 
     async startCamera() {
         try {
-            this.stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { 
-                    facingMode: 'user',
-                    width: { ideal: 300 },
-                    height: { ideal: 300 }
-                } 
-            });
+            // Try to get the environment-facing camera first on mobile
+            try {
+                this.stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { ideal: 'environment' },
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+            } catch (err) {
+                // If environment camera fails, fall back to user-facing camera
+                this.stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+            }
+
             this.video.srcObject = this.stream;
+            this.video.setAttribute('playsinline', ''); // Prevent fullscreen on iOS
+            this.video.setAttribute('autoplay', '');
+            await this.video.play(); // Explicitly start playing
+
             this.cameraUI.classList.remove('hidden');
             this.canvas.classList.add('hidden');
             this.snapButton.classList.remove('hidden');
@@ -252,7 +271,7 @@ class FlappyBird {
             this.video.classList.remove('hidden');
         } catch (err) {
             console.error('Error accessing camera:', err);
-            alert('Unable to access camera. Please make sure you have granted camera permissions.');
+            alert('Unable to access camera. Please make sure you have granted camera permissions and are using a supported browser.');
         }
     }
 
@@ -260,7 +279,16 @@ class FlappyBird {
         const context = this.canvas.getContext('2d');
         this.canvas.width = this.video.videoWidth;
         this.canvas.height = this.video.videoHeight;
+        
+        // Flip the context horizontally to counter the preview mirror
+        context.scale(-1, 1);
+        context.translate(-this.canvas.width, 0);
+        
+        // Draw the video frame
         context.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
+        
+        // Reset the transformation
+        context.setTransform(1, 0, 0, 1, 0, 0);
         
         // Hide video and show canvas
         this.video.classList.add('hidden');
